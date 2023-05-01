@@ -11,11 +11,11 @@ const profesores = [];
 //delegacion de eventos
 document.addEventListener(('click'), (e)=>{
     //capturo los eventos de los botones
-    if(e.target.dataset.nombre){
+    if(e.target.dataset.uid){
         if(e.target.matches(".btn-success")){
             estudiantes.map((item)=>{
                 //modificamos en caso de que sea true}
-                if(item.nombre === e.target.dataset.nombre){
+                if(item.uid === e.target.dataset.uid){
                     item.setEstado = true;
                 }
                 return item;
@@ -23,22 +23,24 @@ document.addEventListener(('click'), (e)=>{
         }
         if(e.target.matches(".btn-danger")){
             estudiantes.map((item)=>{
-                if(item.nombre === e.target.dataset.nombre){
+                if(item.uid === e.target.dataset.uid){
                     item.setEstado = false;
                 }
                 return item;
-            })
+            });
         }
         //como modificamos estudiante tenemos que pintar nuevamente nuestro sitio web
         Persona.pintarPersonaUI(estudiantes, "Estudiante");
     }
-})
+});
 
 //POO en Javascript
 class Persona {
     constructor(nombre,edad){
         this.nombre = nombre;
         this.edad = edad; 
+        this.uid = `${Date.now()}`;//Devuelve el numero de milisegundos transcurridos
+        //usamos el template string para pintar el uid de numero a string
     }
 
     //pintamos la instancia de estudiante y el tipo si es estudiante o profesor
@@ -100,8 +102,8 @@ class Estudiante extends Persona{
         }
         clone.querySelector(".badge").textContent = this.#estado ? "Aprobado" : "Reprobado"
 
-        clone.querySelector(".btn-success").dataset.nombre = this.nombre;
-        clone.querySelector(".btn-danger").dataset.nombre = this.nombre;
+        clone.querySelector(".btn-success").dataset.uid = this.uid;
+        clone.querySelector(".btn-danger").dataset.uid = this.uid;
 
         return clone
     }
@@ -127,6 +129,13 @@ formulario.addEventListener('submit',(e)=>{
     
     const datos = new FormData(formulario);
     const [nombre,edad,opcion] = [...datos.values()];
+
+    //validacion de campos vacios
+    if(!nombre.trim() || !edad.trim() || !opcion.trim()){
+        console.log("Elemento vacio");
+        alert.classList.remove("d-none");
+        return;
+    }
 
 
     if(opcion === "Estudiante"){    
